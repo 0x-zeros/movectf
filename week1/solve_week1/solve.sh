@@ -1,8 +1,8 @@
 #https://docs.sui.io/references/cli/ptb
 
 
-package_id="0xc7b106c1391d281aac52a100c595d340a299eac70a0acb6718209bf34f3cc1e0"
-challenge_object_id="0x9263b6e4b5d56205eea784ccb74225f0d398a4eaef12269185b1d052573c4665"
+package_id="0x337ec7c958b5dd02a292ed32ade51797efbfcbba232109a1d446c69e9e879ca5"
+challenge_object_id="0x74b003cb6532130df6c799f0c1fc84b99f63335e1be3f7e113e93f67c2eeb40b"
 
 
 

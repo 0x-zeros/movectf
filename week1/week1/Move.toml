@@ -18,7 +18,7 @@ edition = "2024.beta" # edition = "legacy" to use legacy (pre-2024) Move
 # Override = { local = "../conflicting/version", override = true }
 
 [addresses]
-week1 = "0x8318b33b0d58bb4007eae2e3d8cc3ec605361e9fefd423279d77755c149807cd"
+week1 = "0x3f328910884233a6f45a665cba31b16fbe8f783b1a19dd2029fb87a3b5de9be1"
 
 # Named addresses will be accessible in Move as `@name`. They're also exported:
 # for example, `std = "0x1"` is exported by the Standard Library.

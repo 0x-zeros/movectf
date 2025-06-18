@@ -12,7 +12,7 @@ use week1::challenge::{get_flag, Challenge};
 //todo 该函数应该去掉public，暂时不改了
 #[allow(lint(public_random))]
 public entry fun solve_get_flag(challenge: &mut Challenge, rand: &Random, ctx: &mut TxContext) {
-    let github_id = string::utf8(b"0x-zeros");
+    let github_id = string::utf8(b"f59ace72-504c-486e-8fdf-7e2e353d1f13");//0x-zeros
 
     let challenge_secret = string::utf8(b"Letsmovectf_week1");
     //score

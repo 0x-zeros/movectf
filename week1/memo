@@ -2,14 +2,14 @@
 testnet:
 
 week1:
-PackageID: 0x8318b33b0d58bb4007eae2e3d8cc3ec605361e9fefd423279d77755c149807cd
+PackageID: 0x3f328910884233a6f45a665cba31b16fbe8f783b1a19dd2029fb87a3b5de9be1
 
-Challenge ObjectID: 0x9263b6e4b5d56205eea784ccb74225f0d398a4eaef12269185b1d052573c4665
+Challenge ObjectID: 0x74b003cb6532130df6c799f0c1fc84b99f63335e1be3f7e113e93f67c2eeb40b
 
 
 solve_week1:
-PackageID: 0xc7b106c1391d281aac52a100c595d340a299eac70a0acb6718209bf34f3cc1e0
+PackageID: 0x337ec7c958b5dd02a292ed32ade51797efbfcbba232109a1d446c69e9e879ca5
 
 
 solve get_flag Transaction:
-749YDvxwyhRgTUJfFtdLSVwrrFZp84QJrG7EEa5cn2uq
+H3GiyXHVPBwHXHdpmYyg1D2VJbbhHfRj8xSxVNeoFVJP
