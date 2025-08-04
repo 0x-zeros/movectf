@@ -43,6 +43,7 @@ module ctf::random {
         rand_u64_with_seed(seed(ctx))
     }
 
+    //[low, high)
     public fun rand_u64_range(low: u64, high: u64, ctx: &mut TxContext): u64 {
         rand_u64_range_with_seed(seed(ctx), low, high)
     }

@@ -94,7 +94,7 @@ module game::adventure {
         let hero_hp = hero::hp(hero);
         let monster_hp = monster.hp;
         let cnt = 0u64; 
-        let rst = 0u64; 
+        let rst = 0u64; //0: not dead, 1: monster dead, 2: hero dead
         while (monster_hp > 0) {
             let damage = if (hero_strength > monster.defense) {
                 hero_strength - monster.defense
@@ -109,13 +109,13 @@ module game::adventure {
                     0
                 };
                 if (damage >= hero_hp) {
-                    rst = 2;
+                    rst = 2; //hero is dead
                     break
                 } else {
                     hero_hp = hero_hp - damage;
                 }
             } else {
-                rst = 1;
+                rst = 1; //monster is dead
                 break
             };
             cnt = cnt + 1;
@@ -137,6 +137,7 @@ module game::adventure {
         let fight_result = fight_monster<Boar>(hero, &boar);
         hero::decrease_stamina(hero, 1);
      
+        //fight_result: 0: not dead, 1: monster dead, 2: hero dead
         if (fight_result == 1) {
             hero::increase_experience(hero, 10);
 
@@ -181,6 +182,7 @@ module game::adventure {
         let fight_result = fight_monster<BoarKing>(hero, &boar);
         //hero::decrease_stamina(hero, 2);
 
+        //fight_result: 0: not dead, 1: monster dead, 2: hero dead
         if (fight_result == 1) { 
             let current_timestamp = clock::timestamp_ms(clock);
             let d100 = current_timestamp % 3;

@@ -1,0 +1,30 @@
+{
+  "name": "chapter7-solve",
+  "version": "1.0.0",
+  "description": "TypeScript solution for Chapter 7 Move CTF challenge",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/index.ts",
+    "dev": "ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sui",
+    "move",
+    "ctf",
+    "typescript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@mysten/sui": "^1.37.1",
+    "axios": "^1.11.0"
+  }
+}
