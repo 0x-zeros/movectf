@@ -10,7 +10,23 @@ module maze::maze {
     const ROW: u64 = 10;
     const COL: u64 = 11;
 
+    //# = 35 (墙)
+    //S = 83 (起点)
+    //* = 42 (路径)
+    //E = 69 (终点)
     const MAZE: vector<u8> = b"#S########\n#**#######\n##*#######\n##***#####\n####*#####\n##***###E#\n##*#####*#\n##*#####*#\n##*******#\n##########";
+    // 行0: #S########\n  (位置0-10)
+    // 行1: #**#######\n  (位置11-21) 
+    // 行2: ##*#######\n  (位置22-32)
+    // 行3: ##***#####\n  (位置33-43)
+    // 行4: ####*#####\n  (位置44-54)
+    // 行5: ##***###E#\n  (位置55-65)
+    // 行6: ##*#####*#\n  (位置66-76)
+    // 行7: ##*#####*#\n  (位置77-87)
+    // 行8: ##*******#\n  (位置88-98)
+    // 行9: ##########\n  (位置99-109)
+
+    //moves： sdssddssaasssddddddwww
 
     const START_POS: u64 = 1;
 
@@ -69,7 +85,7 @@ module maze::maze {
             let mut new_pos = current_pos;
 
             // ASCII values: w=119, s=115, a=97, d=100
-            if (c == 119) { 
+            if (c == 119) { //w向上
                 if (current_pos >= COL) {
                     new_pos = current_pos - COL; 
                 } else {
@@ -77,10 +93,10 @@ module maze::maze {
                     break
                 }
             }
-            else if (c == 115) { 
-                new_pos = current_pos + COL; 
+            else if (c == 115) { //s向下
+                new_pos = current_pos + COL;  //(bug)缺少最下面一行check与处理，会越界
             }
-            else if (c == 97) { 
+            else if (c == 97) { //a向左
                 if (current_pos % COL != 0) {
                     new_pos = current_pos - 1; 
                 } else {
@@ -88,7 +104,7 @@ module maze::maze {
                     break
                 }
             }
-            else if (c == 100) { 
+            else if (c == 100) { //d向右
                 if (current_pos % COL != COL - 1) {
                     new_pos = current_pos + 1; 
                 } else {
@@ -97,24 +113,28 @@ module maze::maze {
                 }
             }
             else { 
-                i = i + 1; 
+                i = i + 1; //(?) 被忽略的无效move？
                 continue
             };
 
             // Boundary check
-            if (new_pos >= ROW * COL) {
+            if (new_pos >= ROW * COL) { //只能通过上面的漏洞的s向下来实现？
                 event::emit(InvalidMove {});
                 break
             };
 
             let cell = maze_at(new_pos);
 
-            if (cell == 35) {
+            //# = 35 (墙)
+            //S = 83 (起点)
+            //* = 42 (路径)
+            //E = 69 (终点)
+            if (cell == 35) {//墙
                 event::emit(HitWall {});
                 break
             };
 
-            if (cell == 69) {
+            if (cell == 69) {//终点
                 challenge.challenge_complete = true;
                 event::emit(Success { path: string::utf8(moves) });
                 break
@@ -149,6 +169,8 @@ module maze::maze {
         challenge.challenge_complete
     }
 
+    // 正常情况下maze_pos 等于 pos， 直接用pos就行啊，重新算一遍很多余。
+    // 但是这里存在,是为了配合漏洞的s向下来实现越界 ? 好像也不是？计算结果并不会变，调用maze_at之前有len 越界check
     fun maze_at(pos: u64): u8 {
         let maze_ref = &MAZE;
         let row = pos / COL;
