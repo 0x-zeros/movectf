@@ -121,7 +121,7 @@ module crypto::crypto {
         let mut i = 0;
         let mut generator = new_generator(r, ctx); // generator is a PRG
         while(i < 64) {
-            k.push_back(random::generate_u64_in_range(&mut generator, 0, 4294967296));
+            k.push_back(random::generate_u64_in_range(&mut generator, 0, 4294967296)); //4294967296: 2 ** 32
             i = i + 1;
         };
 
