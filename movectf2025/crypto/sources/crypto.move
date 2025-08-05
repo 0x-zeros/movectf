@@ -6,7 +6,7 @@ module crypto::crypto {
         flag: bool
     }
 
-    const MOD: u128 = 18446744073709551615;
+    const MOD: u128 = 18446744073709551615; // 2^64 - 1
 
 
 
