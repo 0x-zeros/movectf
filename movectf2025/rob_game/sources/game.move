@@ -43,11 +43,11 @@ module game::ez_game {
 
     public entry fun get_flag(user_input: vector<u64>, rc: &mut Challenge, ctx: &mut TxContext) {
         let sender = sui::tx_context::sender(ctx);
-        let mut houses = rc.initial_part;
+        let mut houses = rc.initial_part; //vector 有copy ability
         let mut weights = rc.weights;
-        vector::append(&mut houses, user_input);
-        let mut i = vector::length(&rc.initial_part); //&rc.initial_part 所有权还在吗？
-        while (i < vector::length(&houses)) { //weights 为 初始化的weights (append) {len(houses)个1: 1,1,2,1,1, 5个1， len(user_input)个1}  ; {}为houses
+        vector::append(&mut houses, user_input); //houses 为 initial_part + user_input
+        let mut i = vector::length(&rc.initial_part); 
+        while (i < vector::length(&houses)) { //在weights后面append1，使之和houses一样长
             vector::push_back(&mut weights, 1);
             i = i + 1;
         };
@@ -59,9 +59,9 @@ module game::ez_game {
     }
 
     #[allow(deprecated_usage)]
-    fun weighted_rob(houses: &vector<u64>, weights: &vector<u64>): u64 {
+    public fun weighted_rob(houses: &vector<u64>, weights: &vector<u64>): u64 {
         let n = vector::length(houses);
-        assert!(n == vector::length(weights), 0); //？ how？
+        assert!(n == vector::length(weights), 0);
         if (n == 0) {
             return 0
         };
