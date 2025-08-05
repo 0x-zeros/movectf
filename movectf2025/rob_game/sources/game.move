@@ -59,7 +59,7 @@ module game::ez_game {
     }
 
     #[allow(deprecated_usage)]
-    public fun weighted_rob(houses: &vector<u64>, weights: &vector<u64>): u64 {
+    fun weighted_rob(houses: &vector<u64>, weights: &vector<u64>): u64 {
         let n = vector::length(houses);
         assert!(n == vector::length(weights), 0);
         if (n == 0) {
