@@ -207,7 +207,7 @@ public fun add_liquidity<LP, A, B>(
 public fun remove_liquidity<LP, A, B>(
     pool: &mut Pool<LP>,
     position: LiquidityPosition,
-    amount: u64,
+    amount: u64, // min a amount out
     ctx: &mut TxContext
 ): (Coin<A>, Coin<B>) {
     assert!(contains_type<LP, A>(pool) && contains_type<LP, B>(pool), ETypeNotFoundInPool);
