@@ -189,7 +189,8 @@ async function main(){
 
     // 打野猪王获取balances
     //每个成功的tx需要大约2.77 Sui, 失败的话需要0.0121 Sui，需要准备足够的gas
-    for(let j = 0; j < 10000; j++){//while(true){
+    const N = 10000;
+    for(let j = 0; j < N; j++){//while(true){
         try{
             const tx3 = new Transaction();
             let num = 2047;
