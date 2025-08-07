@@ -6,20 +6,23 @@ import axios from 'axios';
 import * as fs from 'fs';
 import * as os from 'os';
 
-const env = 'devnet';
-const suiRpcUrl = getFullnodeUrl(env);
 
 //testnet
-// const heroId = '0x6b78a8546544534f9b008f23b83ccc289db036d090b48551a3ad47bc73f0a6bd';// heroId
-// const userTokenAmountId = '0xbc7227801697b492f14b1414d96cb7df70c267ad982811a6eedb8c8a1e2c9fcb';// userTokenAmountId
-// const PACKAGE_ID = '0xf56f48f5104463bf4f60eb8daaaafb22de896f36f5ac11f49954de8c7ecd0a1c'; // PACKAGE_ID
+const env = 'testnet';
+const heroId = '0x6c6bdc420c63b2cee8f44b3b3b03f60a9d84ea573a085bf4c6e870341adea76b';// heroId
+const userTokenAmountId = '0x610146500dcede1425c1fd18bd0e750020701afa9aeab05927f99813f79afd9d';// userTokenAmountId
+const PACKAGE_ID = '0xa03fa7bbf36846853edf8eed1921f93060aafaccd9a471be299d73d09879369a'; // PACKAGE_ID
 
-//devnet
-const heroId = '0xbf4e702c9ae6f783fddc83bd545e7514f25b6eff4809130c46d41f51b674c785';// heroId
-const userTokenAmountId = '0xd03f5355e3d96e50ca2b68bdc21902b14ff4d8a829f05b4f866082c05a1e81a7';// userTokenAmountId
-const PACKAGE_ID = '0x84ee4aaafac1983af6340711bf4bf679b3875ce0aeeb0e1913dc3ee1479e12fd'; // PACKAGE_ID
+// //devnet
+// const env = 'devnet';
+// const heroId = '0xbf4e702c9ae6f783fddc83bd545e7514f25b6eff4809130c46d41f51b674c785';// heroId
+// const userTokenAmountId = '0xd03f5355e3d96e50ca2b68bdc21902b14ff4d8a829f05b4f866082c05a1e81a7';// userTokenAmountId
+// const PACKAGE_ID = '0x84ee4aaafac1983af6340711bf4bf679b3875ce0aeeb0e1913dc3ee1479e12fd'; // PACKAGE_ID
 
 //devnet get_flag tx digest: HX7Y6z2GaDJDFuyXgsydTfQV8i9SSg5TA1v29kAkiUk6
+
+const suiRpcUrl = getFullnodeUrl(env);
+
 
 function get_keypair_from_keystore(){
     const keystorePath = os.homedir() + '/.sui/sui_config/sui.keystore';

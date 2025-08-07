@@ -5,11 +5,7 @@ import { get_keypair_from_keystore, get_newly_created_object, get_transaction_ev
 
 
 //https://platform.cyclens.tech/activity/7
-//迷宫
-
-const github_id = '0x-zeros';
-
-const SUI_PACKAGE_ID = '0x2';
+//算术
 
 // //testnet
 // const env = 'testnet';
