@@ -7,23 +7,29 @@ admin_cap="0x078a9494f0e0edc9563e5a589170e0b532802fc8b305fbf0735548100d5fb571"
 
 module="counter"
 
-# package_id_v2="0x11c06bfaa6de0ef6689fe6c9d37ae5571618f740ccb69065fc2c53f85093869e"
-package_id_v3=""
+package_id_v2="0xa01f5d98420d9574cc9056442676320c36c1089a2e017547128ede56bcebf974"
 
 
 
 
-sui client call --package $package_id \
-  --module $module \
-  --function increment \
-  --args $counter_id
-
-
-# sui client call --package $package_id_v3 \
+# sui client call --package $package_id \
 #   --module $module \
 #   --function increment \
 #   --args $counter_id
 
 
+# sui client call --package $package_id_v2 \
+#   --module $module \
+#   --function migrate \
+#   --args $counter_id $admin_cap
+
+
+
+sui client call --package $package_id_v2 \
+  --module $module \
+  --function increment \
+  --args $counter_id
+
+
 #upgrade
-#sui client upgrade --upgrade-capability 0x0ba711a45f88850be6d2a957f41fc15ef585e60cccfbf08011f5b9af48bd9ccd
+#sui client upgrade --upgrade-capability 0xc2b4b90f936d23b476e9febe97519fb971167eeeabf39d363c016cdc276ccddb
