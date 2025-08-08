@@ -1,4 +1,4 @@
-// module upgrage::counter_v2;
+// module upgrage::counter;
 
 // use sui::event;
 
