@@ -113,7 +113,9 @@ fun buy<T: key + store, COIN>(
     // Check if there's already a Coin hanging and merge `paid` with it.
     // Otherwise attach `paid` to the `Marketplace` under owner's `address`.
     if (marketplace.payments.contains(owner)) {
-        marketplace.payments.borrow_mut(owner).join(paid)
+        //marketplace.payments.borrow_mut(owner).join(paid)
+        let coin = &mut marketplace.payments[owner];
+        coin.join(paid);
     } else {
         marketplace.payments.add(owner, paid)
     };

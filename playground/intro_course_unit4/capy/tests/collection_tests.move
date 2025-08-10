@@ -18,6 +18,7 @@ fun test() {
     scenario.next_tx(dev);
     {
         test_table_equal(scenario.ctx());
+        test_table(scenario.ctx());
 
 
         // random::create_for_testing(scenario.ctx());
@@ -69,6 +70,25 @@ fun test_table_equal(ctx: &mut TxContext) {
 
     table1.drop();
     table::drop(table2);
+}
+
+#[test_only]
+fun test_table(ctx: &mut TxContext) {
+ 
+    let mut table1 = table::new<u64, u64>(ctx);
+    table1.add(0, 1000);
+    table1.add(1, 2000);
+
+    let v0 = table1.borrow(0);
+    let v1 = table1.borrow(1);
+
+    let u0 = &table1[0];
+    let u1 = &table1[1];
+
+    assert!(v0 == u0 && v0 == 1000, 0);
+    assert!(v1 == u1 && v1 == 2000, 1);
+
+    table1.drop();
 }
 
 #[test_only]
