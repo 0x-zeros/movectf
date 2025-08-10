@@ -88,6 +88,8 @@ public fun delist_and_take<T: key + store, COIN>(
     ctx: &mut TxContext,
 ) {
     let item = delist<T, COIN>(marketplace, item_id, ctx);
+
+    //Remember that Sui assets cannot be destroyed outside of their defining module, so we must transfer the item to the delister.
     transfer::public_transfer(item, ctx.sender());
 }
 
