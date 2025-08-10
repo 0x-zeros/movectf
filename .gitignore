@@ -100,3 +100,8 @@ Move.lock
 # Temporary files
 *.tmp
 *.temp
+
+
+*.keystore
+sui.keystore
+~/.sui/
