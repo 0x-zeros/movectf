@@ -130,10 +130,16 @@ async function scheduleFaucetRequests() {
     
     // 设置定时器
     setInterval(async () => {
+        //等待（1秒 到 SCHEDULE_INTERVAL/10）之间的随机时间
+        const randomDelay = Math.floor(Math.random() * (SCHEDULE_INTERVAL / 10)) + 1000;
+        const timestamp = new Date().toLocaleString('zh-CN');
+        console.log(`[${timestamp}] 等待 ${randomDelay / 1000} 秒后执行...`);
+        await new Promise(resolve => setTimeout(resolve, randomDelay));
+        
         // 如果正在重试中，跳过这次定时调用
-        if (!isRetrying) {
+        // if (!isRetrying) {
             await executeFaucetRequest();
-        }
+        // }
     }, SCHEDULE_INTERVAL);
 }
 
