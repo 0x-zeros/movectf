@@ -98,6 +98,9 @@ async function sendDiscordMessage(message: string) {
         // console.warn("未设置 DISCORD_WEBHOOK_URL，将不会发送 Discord 通知");
         return;
     }
+
+    //message 后面添加分割线
+    message += "\n--------------------------------\n\n\n";
     
     console.log("send discord message:", message);
     try {
@@ -114,93 +117,69 @@ async function sendDiscordMessage(message: string) {
 
 // 定时调用配置
 const SCHEDULE_INTERVAL = process.env.SCHEDULE_INTERVAL ? parseInt(process.env.SCHEDULE_INTERVAL) : 60 * 60 * 1000; // 默认1小时
-const RETRY_DELAY = process.env.RETRY_DELAY ? parseInt(process.env.RETRY_DELAY) : 10 * 60 * 1000; // 10分钟重试延迟
-const MAX_RETRY_COUNT = 2; // 最大重试2次
+const RETRY_DELAY = 60 * 1000; // 1分钟重试延迟
 
-// 重试状态管理
-let retryCount = 0;
-let isRetrying = false;
+// 封装间隔时间函数
+//isSuccess: wait之前的faucet是否成功; true 成功，false 失败
+//waitTimePrev: 上一次等待时间
+// 修改 waitInterval 函数，返回实际等待时间
+async function waitInterval(isSuccess: boolean, waitTimePrev: number): Promise<number> {
+    let delay: number;
+    let intervalName: string;
 
-// 定时调用主函数
-async function scheduleFaucetRequests() {
-    console.log(`开始定时调用 faucet，间隔: ${SCHEDULE_INTERVAL / (60 * 1000)} 分钟`);
+    //如果上一次成功，或者上一次等待时间等于1分钟(重试延迟)，则等待1小时
+    let isLongInterval = isSuccess || waitTimePrev == RETRY_DELAY;
     
-    // 立即执行一次
-    await executeFaucetRequest();
-    
-    // 设置定时器
-    setInterval(async () => {
-        //等待（1秒 到 SCHEDULE_INTERVAL/10）之间的随机时间
+    if (isLongInterval) {
+        // 1小时间隔 + 随机扰动
+        //等待时间会是：1小时 + (1秒到6分钟)的随机时间，可以有效避免被检测到固定的请求模式。
         const randomDelay = Math.floor(Math.random() * (SCHEDULE_INTERVAL / 10)) + 1000;
-        const timestamp = new Date().toLocaleString('zh-CN');
-        console.log(`[${timestamp}] 等待 ${randomDelay / 1000} 秒后执行...`);
-        await new Promise(resolve => setTimeout(resolve, randomDelay));
-        
-        // 如果正在重试中，跳过这次定时调用
-        // if (!isRetrying) {
-            await executeFaucetRequest();
-        // }
-    }, SCHEDULE_INTERVAL);
+        delay = SCHEDULE_INTERVAL + randomDelay;
+        intervalName = `${SCHEDULE_INTERVAL / (60 * 1000)} 小时 + ${randomDelay / 1000} 秒随机扰动`;
+    } else {
+        // 1分钟间隔
+        delay = RETRY_DELAY;
+        intervalName = `${RETRY_DELAY / 1000} 秒`;
+    }
+    
+    const timestamp = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+    console.log(`[${timestamp}] 等待 ${intervalName} 后执行...`);
+    await new Promise(resolve => setTimeout(resolve, delay));
+    
+    return delay; // 返回实际等待时间
 }
 
-// 执行 faucet 请求，包含重试逻辑
-async function executeFaucetRequest() {
-    const timestamp = new Date().toLocaleString('zh-CN');
-    console.log(`[${timestamp}] 开始执行 faucet 请求...`);
-    console.log(`[${timestamp}] 目标地址: ${recipient_address}`);
-
-    // 重置重试状态
-    retryCount = 0;
-    isRetrying = false;
+// 主循环函数，替换原来的定时调用
+async function mainLoop() {
+    console.log(`开始主循环，成功间隔: ${SCHEDULE_INTERVAL / (60 * 1000)} 分钟，失败间隔: ${RETRY_DELAY / 1000} 秒`);
     
-    try {
-        const result = await requestSuiFaucet(recipient_address);
-        console.log(`[${timestamp}] 领取成功，响应数据:`, JSON.stringify(result, null, 2));
-        
-        // 获取 SUI 余额，发送到 discord
-        //等待一分钟，等json rpc同步balance
-        await new Promise(resolve => setTimeout(resolve, 60 * 1000));
-        console.log(`[${timestamp}] 正在获取当前余额...`);
-        const balance = await getSuiBalance(recipient_address);
-        console.log(`[${timestamp}] 当前余额: ${balance}`);
-        
-        
-        // 发送成功消息到 Discord，包含余额信息
-        await sendDiscordMessage(`✅ Faucet 领取成功！\n时间: ${timestamp}\n地址: ${recipient_address}\n结果: ${JSON.stringify(result)}\n💰 当前余额: ${balance}`);
-        
-    } catch (err: any) {
-        console.error(`[${timestamp}] 请求失败:`, err.message);
-        
-        // 如果是 429 限流错误，尝试重试
-        if (err.response && err.response.status === 429) {
-            if (retryCount < MAX_RETRY_COUNT) {
-                retryCount++;
-                isRetrying = true;
-                
-                console.log(`[${timestamp}] 检测到限流，第${retryCount}/${MAX_RETRY_COUNT}次重试，${RETRY_DELAY / (60 * 1000)} 分钟后重试...`);
-                
-                // 发送限流通知到 Discord
-                await sendDiscordMessage(`⚠️ Faucet 限流，第${retryCount}/${MAX_RETRY_COUNT}次重试\n时间: ${timestamp}\n地址: ${recipient_address}\n${RETRY_DELAY / (60 * 1000)} 分钟后重试`);
-                
-                // 延迟重试
-                setTimeout(async () => {
-                    console.log(`[${new Date().toLocaleString('zh-CN')}] 开始第${retryCount}次重试...`);
-                    await executeFaucetRequest();
-                }, RETRY_DELAY);
-                
-            } else {
-                console.log(`[${timestamp}] 达到最大重试次数(${MAX_RETRY_COUNT})，停止重试`);
-                isRetrying = false;
-                
-                // 发送重试失败通知到 Discord
-                await sendDiscordMessage(`❌ Faucet 重试失败，已达到最大重试次数(${MAX_RETRY_COUNT})\n时间: ${timestamp}\n地址: ${recipient_address}\n请检查网络或稍后手动重试`);
-            }
-        } else {
-            // 其他错误，重置重试状态
-            retryCount = 0;
-            isRetrying = false;
+    let waitTimePrev = RETRY_DELAY;//上一次等待时间
+    while (true) {
+        const timestamp = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+        console.log(`[${timestamp}] 开始执行 faucet 请求...`);
+        console.log(`[${timestamp}] 目标地址: ${recipient_address}`);
+
+        try {
+            const result = await requestSuiFaucet(recipient_address);
+            console.log(`[${timestamp}] 领取成功，响应数据:`, JSON.stringify(result, null, 2));
             
-            // 根据错误类型发送不同的通知
+            // 获取 SUI 余额，发送到 discord
+            //等待一分钟，等json rpc同步balance
+            await new Promise(resolve => setTimeout(resolve, 60 * 1000));
+            console.log(`[${timestamp}] 正在获取当前余额...`);
+            const balance = await getSuiBalance(recipient_address);
+            console.log(`[${timestamp}] 当前余额: ${balance}`);
+            
+            // 发送成功消息到 Discord，包含余额信息
+            await sendDiscordMessage(`✅ Faucet 领取成功！\n时间: ${timestamp}\n地址: ${recipient_address}\n结果: ${JSON.stringify(result)}\n💰 当前余额: ${balance}`);
+            
+            // 成功：等待1小时 + 随机扰动，并更新 waitTimePrev
+            waitTimePrev = await waitInterval(true, waitTimePrev);
+            
+        } catch (err: any) {
+            console.error(`[${timestamp}] 请求失败:`, err.message);
+            
+            // 发送失败通知
             let errorMessage = `❌ Faucet 请求失败\n时间: ${timestamp}\n地址: ${recipient_address}\n错误: ${err.message}`;
             
             if (err.response) {
@@ -218,6 +197,9 @@ async function executeFaucetRequest() {
             }
             
             await sendDiscordMessage(errorMessage);
+            
+            // 失败：等待1分钟，并更新 waitTimePrev
+            waitTimePrev = await waitInterval(false, waitTimePrev);
         }
     }
 }
@@ -235,17 +217,17 @@ async function main() {
     console.log(`配置信息:`);
     console.log(`- 网络: ${network}`);
     console.log(`- 地址: ${recipient_address}`);
-    console.log(`- 调用间隔: ${SCHEDULE_INTERVAL / (60 * 1000)} 分钟`);
-    console.log(`- 重试延迟: ${RETRY_DELAY / (60 * 1000)} 分钟`);
+    console.log(`- 成功间隔: ${SCHEDULE_INTERVAL / (60 * 1000)} 分钟`);
+    console.log(`- 失败重试间隔: ${RETRY_DELAY / 1000} 秒`);
 
     //初始sui余额
-    const timestamp = new Date().toLocaleString('zh-CN');
+    const timestamp = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
     console.log(`[${timestamp}] 正在获取初始余额...`);
     const balance = await getSuiBalance(recipient_address);
     console.log(`[${timestamp}] 初始余额: ${balance}`);
     
-    // 启动定时调用
-    await scheduleFaucetRequests();
+    // 启动主循环
+    await mainLoop();
     
     // 保持程序运行
     console.log("程序已启动，按 Ctrl+C 停止...");
