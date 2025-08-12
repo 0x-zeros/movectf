@@ -135,7 +135,7 @@ async function waitInterval(isSuccess: boolean, waitTimePrev: number): Promise<n
         //等待时间会是：1小时 + (1秒到6分钟)的随机时间，可以有效避免被检测到固定的请求模式。
         const randomDelay = Math.floor(Math.random() * (SCHEDULE_INTERVAL / 10)) + 1000;
         delay = SCHEDULE_INTERVAL + randomDelay;
-        intervalName = `${SCHEDULE_INTERVAL / (60 * 1000)} 小时 + ${randomDelay / 1000} 秒随机扰动`;
+        intervalName = `${SCHEDULE_INTERVAL / (60 * 1000)} 分钟 + ${randomDelay / 1000} 秒随机扰动`;
     } else {
         // 1分钟间隔
         delay = RETRY_DELAY;
