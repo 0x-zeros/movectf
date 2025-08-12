@@ -6,3 +6,6 @@ Unit Five: Sui Kiosk
     Sui Kiosk Basic Concepts
     Sui Kiosk Basic Usage
     Transfer Policy
+
+
+    kiosk: 售货亭,  公用电话亭
