@@ -153,7 +153,7 @@ async function waitInterval(isSuccess: boolean, waitTimePrev: number): Promise<n
 async function mainLoop() {
     console.log(`开始主循环，成功间隔: ${SCHEDULE_INTERVAL / (60 * 1000)} 分钟，失败间隔: ${RETRY_DELAY / 1000} 秒`);
     
-    let waitTimePrev = RETRY_DELAY;//上一次等待时间
+    let waitTimePrev = SCHEDULE_INTERVAL;//上一次等待时间
     while (true) {
         const timestamp = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
         console.log(`[${timestamp}] 开始执行 faucet 请求...`);
