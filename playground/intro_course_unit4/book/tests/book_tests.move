@@ -2,7 +2,7 @@
 #[test_only]
 module book::book_tests;
 
-// use std::debug::print;
+use std::debug::print;
 use sui::test_scenario;
 
 use book::transfer_a::{Self, ObjectK, ObjectKS};
@@ -116,6 +116,31 @@ fun test_id2() {
 }
 
 
+#[test]
+fun test_id3(){
+    let ctx = &mut tx_context::dummy();
+  
+    //TxContext提供了fresh_object_address函数，可以用于创建唯一的地址和ID。这在一些应用程序中分配唯一标识符给用户行为，例如市场中的order_id，可能非常有用。
+    let id1 = ctx.fresh_object_address();
+    print(&b"id1:".to_string());
+    print(&id1);
+
+    let id2 = ctx.fresh_object_address();
+    print(&b"id2:".to_string());
+    print(&id2);
+
+    let id3 = ctx.fresh_object_address();
+    print(&b"id3:".to_string());
+    print(&id3);
+
+// [debug] "id1:"
+// [debug] @0x381dd9078c322a4663c392761a0211b527c127b29583851217f948d62131f409
+// [debug] "id2:"
+// [debug] @0xeefed4f2b7f6ad5f65d6ea2eef50b4f1d1e98c39ca8eecbc9736da801b8387e6
+// [debug] "id3:"
+// [debug] @0x7feb3b9302d57132146f95a1d01aa12fb88d6f828cc517ee73706a019028505b
+
+}
 
 
 
