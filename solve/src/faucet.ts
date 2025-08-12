@@ -158,6 +158,8 @@ async function executeFaucetRequest() {
         console.log(`[${timestamp}] 领取成功，响应数据:`, JSON.stringify(result, null, 2));
         
         // 获取 SUI 余额，发送到 discord
+        //等待一分钟，等json rpc同步balance
+        await new Promise(resolve => setTimeout(resolve, 60 * 1000));
         console.log(`[${timestamp}] 正在获取当前余额...`);
         const balance = await getSuiBalance(recipient_address);
         console.log(`[${timestamp}] 当前余额: ${balance}`);
